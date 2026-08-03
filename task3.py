@@ -1,6 +1,7 @@
-import sys 
-from pathlib import Path
+import sys
 from collections import Counter
+from pathlib import Path
+
 
 def parse_log_line(line: str) -> dict:
     keys = ['date', 'time', 'level', 'message']
@@ -44,7 +45,7 @@ def main() -> None:
         print("Usage: python main.py <path_to_logfile> [log_level]")
         sys.exit(1)
 
-    file_path = sys.argv[1]
+    file_path = Path(sys.argv[1])
     logs = load_logs(file_path)
     
 
@@ -58,7 +59,7 @@ def main() -> None:
         level = sys.argv[2]
         filtered = filter_logs_by_level(logs, level)
 
-        print(f'\n Log details for the level \'{level.upper()}\':')
+        print(f'\nLog details for the level \'{level.upper()}\':')
         for log in filtered:
             print(f"{log['date']} {log['time']} - {log['message']}")
         
