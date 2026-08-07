@@ -3,22 +3,24 @@ def input_error(func):
         try:
             return func(*args, **kwargs)
         except ValueError:
-            return "Give name and phone please."
+            return "Enter the argument for the command."
         except IndexError:
-            return "There are no arguments at all"
+            return "Enter user name."
         except KeyError:
-            return 'Unregistered User'
+            return 'Unregistered User.'
 
     return inner
 
 @input_error
-def add_contact(args, contacts):
+def add_contact(args, contacts: dict[str, str]):
     name, phone = args
+    if phone in contacts:
+        return "This phone is already available." # Додана перевірка на існування номера
     contacts[name] = phone
     return "Contact added."
 
 @input_error
-def change_contact(args, contacts):
+def change_contact(args, contacts: dict[str, str]):
     name, phone = args
     if name not in contacts:
         raise KeyError
@@ -26,11 +28,11 @@ def change_contact(args, contacts):
     return "Contact updated."
 
 @input_error
-def show_phone(args, contacts):
+def show_phone(args, contacts: dict[str, str]):
     name = args[0]  # Якщо args порожній -> IndexError
     return contacts[name]  # Якщо name немає -> KeyError
 
-def show_all(contacts):
+def show_all(contacts: dict[str, str]):
     if not contacts:
         return "No contacts found."
     return "\n".join(f"{name}: {phone}" for name, phone in contacts.items())
@@ -53,7 +55,7 @@ def main() -> None:
             print("No input provided. Please enter a command.")
             continue
 
-        command, *args = parse_input(user_input)
+        command, args = parse_input(user_input) # Виправлений баг
 
         if command == "add":
             result = add_contact(args, contacts)
@@ -64,7 +66,7 @@ def main() -> None:
         elif command == "phone":
             result = show_phone(args, contacts)
             print(result)
-        elif command == "show_all":
+        elif command == "all":
             result = show_all(contacts)
             print(result)
         elif command == "exit":
